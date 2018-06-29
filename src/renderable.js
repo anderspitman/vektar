@@ -51,8 +51,8 @@ export class Renderable {
   updateTransform() {
     this.el.setAttributeNS(null,
       'transform',
-      'translate(' + this.state.x + ', ' + this.state.y + ')' +
-      'rotate(' + this.state.rotationDegrees + ')' +
+      'translate(' + this.state.x + ', ' + this.state.y + ') ' +
+      'rotate(' + this.state.rotationDegrees + ') ' +
       'scale(' + this.state.scale + ')')
     return this;
   }
