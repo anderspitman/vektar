@@ -5,17 +5,30 @@ import { ship, radarBuilding, planet } from './primitives';
 const team1Color = 'blue';
 const team2Color = 'yellow';
 
+const KEY_LEFT = 37;
+const KEY_RIGHT = 39;
+const KEY_UP = 38;
+
+const DEGREES_TO_RADIANS = Math.PI / 180;
+
+const playerShip = {
+  x: 50,
+  y: 50,
+  rotationDegrees: 0,
+  scale: 1.0,
+  color: team1Color,
+  initialRotationDegrees: -90,
+  velocity: {
+    x: 0,
+    y: 0,
+  }
+};
+
 const scene = [
   {
     primitiveId: 'ship',
     instances: [
-      {
-        x: 20,
-        y: 20,
-        rotationDegrees: 0,
-        scale: 1.0,
-        color: team1Color,
-      }
+      playerShip 
     ]
   },
   {
@@ -65,25 +78,47 @@ ctx.setBackgroundColor('black');
 
 //ctx.render({ scene });
 
+// handle keyboard input
 const keys = {};
-window.onkeyup = function(e) { keys[e.keyCode] = false; }
-window.onkeydown = function(e) { keys[e.keyCode] = true; }
+document.addEventListener('keyup', function(e) {
+  keys[e.keyCode] = false;
+});
+document.addEventListener('keydown', function(e) {
+  keys[e.keyCode] = true;
+});
 
 function step() {
   //ctx.setViewportPosition({ x: cameraX, y: cameraY });
   //cameraX += 1;
   //cameraY += 1;
   //
-  const rotationStep = 3.0;
+  const rotationStep = 5.0;
+  const thrustAcceleration = 0.1;
 
-  if (keys[37]) {
-    scene[0].instances[0].rotationDegrees -= rotationStep;
+  if (keys[KEY_LEFT]) {
+    playerShip.rotationDegrees -= rotationStep;
   }
-  else if (keys[39]) {
-    scene[0].instances[0].rotationDegrees += rotationStep;
+  else if (keys[KEY_RIGHT]) {
+    playerShip.rotationDegrees += rotationStep;
+  }
+  playerShip.thrustersOn = keys[KEY_UP];
+
+  // movement
+  const adjustedRotation =
+    playerShip.rotationDegrees + playerShip.initialRotationDegrees;
+  const rotationRadians = adjustedRotation * DEGREES_TO_RADIANS;
+  const rotationX = Math.cos(rotationRadians);
+  const rotationY = Math.sin(rotationRadians);
+  //console.log(rotationRadians);
+  //console.log(x, y);
+
+  if (playerShip.thrustersOn) {
+    playerShip.velocity.x += rotationX * thrustAcceleration;
+    playerShip.velocity.y += rotationY * thrustAcceleration;
   }
 
-  scene[0].instances[0].thrustersOn = keys[38];
+  playerShip.x += playerShip.velocity.x;
+  playerShip.y += playerShip.velocity.y;
 
   ctx.render({ scene });
   requestAnimationFrame(step);
