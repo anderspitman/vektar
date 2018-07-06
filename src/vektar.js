@@ -136,8 +136,12 @@ export class Context {
       throw "Primitive already defined";
     }
 
+    const self = this;
+
     function NewPrimitive() {
       Renderable.call(this);
+
+      this.ctx = self;
     };
     NewPrimitive.prototype = Object.create(Renderable.prototype);
     NewPrimitive.prototype.constructor = NewPrimitive;
