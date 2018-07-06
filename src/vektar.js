@@ -82,17 +82,9 @@ export class Context {
     this.root.appendChild(this.backgroundRect);
 
     this.parent.appendChild(this.svg);
-    this.renderables = {};
-    this.objects = [];
 
     this.primitives = {};
     this.scene = {};
-  }
-
-  render() {
-    for (let obj of this.objects) {
-      obj.render();
-    }
   }
 
   setBackgroundColor(color) {
@@ -111,6 +103,10 @@ export class Context {
     this.primitives[id] = { create, render };
   }
 
+  createPrimitive({ primitiveId }) {
+    return this.primitives[primitiveId].create();
+  }
+
   createGroup() {
     return new Group();
   }
@@ -127,7 +123,7 @@ export class Context {
     return new Rectangle();
   }
 
-  update({ scene }) {
+  render({ scene }) {
     for (let objectType of scene) {
 
       if (this.scene[objectType.primitiveId] === undefined) {
@@ -146,7 +142,9 @@ export class Context {
       if (lenDiff < 0) {
         const diff = Math.abs(lenDiff);
         for (let i = 0; i < diff; i++) {
-          const obj = this.primitives[objectType.primitiveId].create();
+          const obj = this.createPrimitive({
+            primitiveId: objectType.primitiveId,
+          });
           scene.instances.push(obj);
           this.root.appendChild(obj.getDomElement());
         }
@@ -163,6 +161,7 @@ export class Context {
         const state = objectType.instances[i];
         instance.setPosition({ x: state.x, y: state.y });
         instance.setRotationDegrees({ angleDegrees: state.rotationDegrees });
+        instance.setScale(state.scale);
         instance.render();
         this.primitives[objectType.primitiveId]
           .render({ object: instance, state });

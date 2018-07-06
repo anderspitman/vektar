@@ -8,14 +8,16 @@ const scene = [
       {
         x: 500,
         y: 250,
-        rotationDegrees: 190,
+        rotationDegrees: 0,
+        scale: 0.5,
         showBuilding: true,
       },
       {
         x: 800,
         y: 250,
-        rotationDegrees: 190,
-        showBuilding: false,
+        rotationDegrees: 0,
+        scale: 1.0,
+        showBuilding: true,
       },
     ],
   },
@@ -64,8 +66,8 @@ function step() {
   //cameraX += 1;
   //cameraY += 1;
   scene[0].instances[0].rotationDegrees += 0.5;
-  ctx.update({ scene });
-  ctx.render();
+  scene[0].instances[1].rotationDegrees -= 0.5;
+  ctx.render({ scene });
   requestAnimationFrame(step);
 }
 requestAnimationFrame(step);
