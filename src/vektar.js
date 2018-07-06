@@ -92,7 +92,7 @@ class Triangle extends Renderable {
     this.el.setAttributeNS(null, 'points',
       vertex1.x * w + ' ' + vertex1.y * h + ', ' +
       vertex2.x * w + ' ' + vertex2.y * h + ', ' +
-      vertex3.x * w + ' ' + vertex3.y * h + ', ');
+      vertex3.x * w + ' ' + vertex3.y * h);
 
     return this;
   }

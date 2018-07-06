@@ -22,7 +22,7 @@ const scene = [
     primitiveId: 'planet',
     instances: [
       {
-        x: 500,
+        x: 100,
         y: 150,
         rotationDegrees: 0,
         scale: 1.0,
@@ -31,7 +31,7 @@ const scene = [
         color: team1Color,
       },
       {
-        x: 800,
+        x: 350,
         y: 150,
         rotationDegrees: 0,
         scale: 1.0,
