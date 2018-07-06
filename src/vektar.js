@@ -216,7 +216,7 @@ export class Context {
         instance.setPosition({ x: state.x, y: state.y });
         instance.setRotationDegrees({ angleDegrees: state.rotationDegrees });
         instance.setScale(state.scale);
-        instance.updateTransform();
+        //instance.updateTransform();
         instance.render({ state });
       }
     }

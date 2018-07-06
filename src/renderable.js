@@ -8,6 +8,8 @@ export function Renderable() {
     y: 0,
     scale: 1.0,
     rotationDegrees: 0,
+    anchorX: 0,
+    anchorY: 0,
   };
 }
 
@@ -28,8 +30,8 @@ Renderable.prototype.updateState = function(update) {
 }
 
 Renderable.prototype.setPosition = function({ x, y }) {
-  this.state.x = x;
-  this.state.y = y;
+  this.state.x = x - this.state.anchorX;
+  this.state.y = y - this.state.anchorY;
   this.updateTransform();
   return this;
 }
@@ -43,6 +45,12 @@ Renderable.prototype.setScale = function(scale) {
 Renderable.prototype.setRotationDegrees = function({ angleDegrees }) {
   this.state.rotationDegrees = angleDegrees;
   this.updateTransform();
+  return this;
+}
+
+Renderable.prototype.setAnchor = function({ x, y }) {
+  this.state.anchorX = x;
+  this.state.anchorY = y;
   return this;
 }
 
@@ -65,7 +73,9 @@ Renderable.prototype.updateTransform = function() {
   this.el.setAttributeNS(null,
     'transform',
     'translate(' + this.state.x + ', ' + this.state.y + ') ' +
-    'rotate(' + this.state.rotationDegrees + ') ' +
+    'rotate(' + this.state.rotationDegrees + ', ' + 
+            this.state.anchorX + ', ' + this.state.anchorY +
+    ') ' +
     'scale(' + this.state.scale + ')')
   return this;
 }

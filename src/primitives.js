@@ -1,3 +1,62 @@
+export const ship = {
+  id: 'ship',
+  create: function() {
+
+    this.setAnchor({ x: 10, y: 10 })
+
+    this.group = this.ctx.createGroup()
+
+    this.tri = this.ctx.createTriangle()
+      .setWidth(20)
+      .setHeight(20)
+      .setVertices({
+        vertex1: { x: 0.5, y: 0 },
+        vertex2: { x: 1, y: 1 },
+        vertex3: { x: 0, y: 1 },
+      })
+    this.group.addChild(this.tri);
+
+    this.leftThruster = this.ctx.createTriangle()
+      .setWidth(4)
+      .setHeight(4)
+      .setPosition({ x: 2, y: 20 })
+      .setVertices({
+        vertex1: { x: 0, y: 0 },
+        vertex2: { x: 1, y: 0 },
+        vertex3: { x: 0.5, y: 1 },
+      })
+    this.group.addChild(this.leftThruster)
+
+    this.rightThruster = this.ctx.createTriangle()
+      .setWidth(4)
+      .setHeight(4)
+      .setPosition({ x: 15, y: 20 })
+      .setVertices({
+        vertex1: { x: 0, y: 0 },
+        vertex2: { x: 1, y: 0 },
+        vertex3: { x: 0.5, y: 1 },
+      })
+    this.group.addChild(this.rightThruster)
+
+
+    return this.group;
+  },
+  render: function({ state }) {
+    this.tri.setStrokeColor(state.color);
+    this.setRotationDegrees({
+      angleDegrees: state.rotationDegrees
+    });
+
+    const thrusterColor = '#23fbff';
+
+    this.leftThruster.setStrokeColor(thrusterColor);
+    this.leftThruster.setVisible(state.thrustersOn);
+
+    this.rightThruster.setStrokeColor(thrusterColor);
+    this.rightThruster.setVisible(state.thrustersOn);
+  }
+};
+
 export const radarBuilding = { 
   id: 'radar-building',
   create: function() {
