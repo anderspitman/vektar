@@ -103,6 +103,8 @@ export class Context {
     this.parent = document.getElementById(domElementId);
 
     const dim = this.parent.getBoundingClientRect();
+    this.width = dim.width;
+    this.height = dim.height;
     this.svg = document.createElementNS(svgNS, 'svg');
     this.svg.setAttributeNS(null, 'width', dim.width);
     this.svg.setAttributeNS(null, 'height', dim.height);
@@ -129,6 +131,14 @@ export class Context {
   setViewportPosition({ x, y }) {
     this.root.setAttributeNS(null, 'transform',
       'translate(' + -x + ', ' + -y + ')')
+  }
+
+  getWidth() {
+    return this.width;
+  }
+
+  getHeight() {
+    return this.height;
   }
 
   registerPrimitive({ id, create, render }) {

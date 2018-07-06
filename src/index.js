@@ -11,9 +11,22 @@ const KEY_UP = 38;
 
 const DEGREES_TO_RADIANS = Math.PI / 180;
 
+class Camera {
+  constructor(vektarContext) {
+    this.ctx = vektarContext;
+  }
+
+  setCenterPosition({ x, y }) {
+    const centerX = x - this.ctx.getWidth() / 2;
+    const centerY = y - this.ctx.getHeight() / 2;
+
+    this.ctx.setViewportPosition({ x: centerX, y: centerY });
+  }
+}
+
 const playerShip = {
-  x: 50,
-  y: 50,
+  x: 1200,
+  y: 1200,
   rotationDegrees: 0,
   scale: 1.0,
   color: team1Color,
@@ -35,8 +48,8 @@ const scene = [
     primitiveId: 'planet',
     instances: [
       {
-        x: 100,
-        y: 150,
+        x: 1000,
+        y: 1000,
         rotationDegrees: 0,
         scale: 1.0,
         showBuilding: true,
@@ -44,8 +57,8 @@ const scene = [
         color: team1Color,
       },
       {
-        x: 350,
-        y: 150,
+        x: 1300,
+        y: 1300,
         rotationDegrees: 0,
         scale: 1.0,
         showBuilding: true,
@@ -87,6 +100,8 @@ document.addEventListener('keydown', function(e) {
   keys[e.keyCode] = true;
 });
 
+const camera = new Camera(ctx);
+
 function step() {
   //ctx.setViewportPosition({ x: cameraX, y: cameraY });
   //cameraX += 1;
@@ -119,6 +134,8 @@ function step() {
 
   playerShip.x += playerShip.velocity.x;
   playerShip.y += playerShip.velocity.y;
+
+  camera.setCenterPosition({ x: playerShip.x, y: playerShip.y });
 
   ctx.render({ scene });
   requestAnimationFrame(step);
