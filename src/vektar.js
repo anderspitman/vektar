@@ -131,7 +131,7 @@ export class Context {
       'translate(' + -x + ', ' + -y + ')')
   }
 
-  definePrimitive({ id, create, render }) {
+  registerPrimitive({ id, create, render }) {
     if (this.primitives[id] !== undefined) {
       throw "Primitive already defined";
     }

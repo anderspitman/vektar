@@ -42,8 +42,8 @@ const ctx = new Context({
   }
 });
 
-ctx.definePrimitive(radarBuilding);
-ctx.definePrimitive(planet);
+ctx.registerPrimitive(radarBuilding);
+ctx.registerPrimitive(planet);
 
 ctx.setBackgroundColor('black');
 
