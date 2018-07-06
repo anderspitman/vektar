@@ -1,63 +1,71 @@
 export const svgNS = "http://www.w3.org/2000/svg";
 
-export class Renderable {
-  constructor() {
-    this.state = {
-      x: 0,
-      y: 0,
-      scale: 1.0,
-      rotationDegrees: 0,
-    };
-  }
+// TODO: this has to be declared using the old class syntax because
+// it was giving errors the other way. I think some bug in Chrome
+export function Renderable() {
+  this.state = {
+    x: 0,
+    y: 0,
+    scale: 1.0,
+    rotationDegrees: 0,
+  };
+}
 
-  getDomElement() {
-    return this.el;
-  }
+Renderable.prototype.getDomElement = function() {
+  return this.el;
+}
 
-  setState(state) {
-    this.state = state;
-    return this;
-  }
+Renderable.prototype.setState = function(state) {
+  this.state = state;
+  return this;
+}
 
-  updateState(update) {
-    for (let key in update) {
-      this.state[key] = update[key];
-    }
-    return this;
+Renderable.prototype.updateState = function(update) {
+  for (let key in update) {
+    this.state[key] = update[key];
   }
+  return this;
+}
 
-  setPosition({ x, y }) {
-    this.state.x = x;
-    this.state.y = y;
-    return this;
-  }
+Renderable.prototype.setPosition = function({ x, y }) {
+  this.state.x = x;
+  this.state.y = y;
+  this.updateTransform();
+  return this;
+}
 
-  setScale(scale) {
-    this.state.scale = scale;
-    return this;
-  }
+Renderable.prototype.setScale = function(scale) {
+  this.state.scale = scale;
+  this.updateTransform();
+  return this;
+}
 
-  setRotationDegrees({ angleDegrees }) {
-    this.state.rotationDegrees = angleDegrees;
-    return this;
-  }
+Renderable.prototype.setRotationDegrees = function({ angleDegrees }) {
+  this.state.rotationDegrees = angleDegrees;
+  this.updateTransform();
+  return this;
+}
 
-  setVisible(visible) {
-    this.el.setAttributeNS(null, 'visibility', visible ? 'visible' : 'hidden');
-  }
+Renderable.prototype.setVisible = function(visible) {
+  this.el.setAttributeNS(null, 'visibility', visible ? 'visible' : 'hidden');
+  return this;
+}
 
-  render() {
-    this.updateTransform();
-    //this.renderInternal();
-    return this;
-  }
+Renderable.prototype.setStrokeColor = function(color) {
+  this.el.setAttributeNS(null, 'stroke', color);
+  return this;
+}
 
-  updateTransform() {
-    this.el.setAttributeNS(null,
-      'transform',
-      'translate(' + this.state.x + ', ' + this.state.y + ') ' +
-      'rotate(' + this.state.rotationDegrees + ') ' +
-      'scale(' + this.state.scale + ')')
-    return this;
-  }
+Renderable.prototype.setFillColor = function(color) {
+  this.el.setAttributeNS(null, 'fill', color);
+  return this;
+}
+
+Renderable.prototype.updateTransform = function() {
+  this.el.setAttributeNS(null,
+    'transform',
+    'translate(' + this.state.x + ', ' + this.state.y + ') ' +
+    'rotate(' + this.state.rotationDegrees + ') ' +
+    'scale(' + this.state.scale + ')')
+  return this;
 }

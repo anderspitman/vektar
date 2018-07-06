@@ -52,14 +52,49 @@ class Rectangle extends Renderable {
   constructor() {
     super();
 
-    const rect = document.createElementNS(svgNS, 'rect');
-    rect.setAttributeNS(null, 'width', 80);
-    rect.setAttributeNS(null, 'height', 40);
-    rect.setAttributeNS(null, 'stroke', 'blue');
-    rect.setAttributeNS(null, 'x', -40);
-    rect.setAttributeNS(null, 'y', 30);
-    rect.setAttributeNS(null, 'visibility', 'hidden');
-    this.el = rect;
+    this.el = document.createElementNS(svgNS, 'rect');
+    //rect.setAttributeNS(null, 'stroke', 'blue');
+    //rect.setAttributeNS(null, 'visibility', 'hidden');
+  }
+
+  setWidth(width) {
+    this.el.setAttributeNS(null, 'width', width);
+    return this;
+  }
+
+  setHeight(height) {
+    this.el.setAttributeNS(null, 'height', height);
+    return this;
+  }
+}
+
+class Triangle extends Renderable {
+  constructor() {
+    super();
+
+    this.el = document.createElementNS(svgNS, 'polygon');
+  }
+
+  setWidth(width) {
+    this.state.width = width;
+    return this;
+  }
+
+  setHeight(height) {
+    this.state.height = height;
+    return this;
+  }
+
+  setVertices({ vertex1, vertex2, vertex3 }) {
+    const w = this.state.width;
+    const h = this.state.height;
+
+    this.el.setAttributeNS(null, 'points',
+      vertex1.x * w + ' ' + vertex1.y * h + ', ' +
+      vertex2.x * w + ' ' + vertex2.y * h + ', ' +
+      vertex3.x * w + ' ' + vertex3.y * h + ', ');
+
+    return this;
   }
 }
 
@@ -100,11 +135,23 @@ export class Context {
     if (this.primitives[id] !== undefined) {
       throw "Primitive already defined";
     }
-    this.primitives[id] = { create, render };
+
+    function NewPrimitive() {
+      Renderable.call(this);
+    };
+    NewPrimitive.prototype = Object.create(Renderable.prototype);
+    NewPrimitive.prototype.constructor = NewPrimitive;
+    NewPrimitive.prototype.create = create;
+    NewPrimitive.prototype.render = render;
+
+    this.primitives[id] = NewPrimitive;
   }
 
   createPrimitive({ primitiveId }) {
-    return this.primitives[primitiveId].create();
+    const prim = new this.primitives[primitiveId]();
+    prim.obj = prim.create();
+    prim.el = prim.obj.el;
+    return prim;
   }
 
   createGroup() {
@@ -123,11 +170,14 @@ export class Context {
     return new Rectangle();
   }
 
+  createTriangle() {
+    return new Triangle();
+  }
+
   render({ scene }) {
     for (let objectType of scene) {
 
       if (this.scene[objectType.primitiveId] === undefined) {
-        console.log("create new obj");
         this.scene[objectType.primitiveId] = {
           instances: [],
         };
@@ -162,9 +212,8 @@ export class Context {
         instance.setPosition({ x: state.x, y: state.y });
         instance.setRotationDegrees({ angleDegrees: state.rotationDegrees });
         instance.setScale(state.scale);
-        instance.render();
-        this.primitives[objectType.primitiveId]
-          .render({ object: instance, state });
+        instance.updateTransform();
+        instance.render({ state });
       }
     }
   }
