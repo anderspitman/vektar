@@ -10,7 +10,7 @@ export class Renderable {
     };
   }
 
-  getElement() {
+  getDomElement() {
     return this.el;
   }
 
@@ -42,9 +42,13 @@ export class Renderable {
     return this;
   }
 
+  setVisible(visible) {
+    this.el.setAttributeNS(null, 'visibility', visible ? 'visible' : 'hidden');
+  }
+
   render() {
     this.updateTransform();
-    this.renderInternal();
+    //this.renderInternal();
     return this;
   }
 

@@ -1,5 +1,25 @@
 import { Context } from './vektar';
-import { Planet } from './renderables/planet';
+import { Game } from './game';
+
+const scene = [
+  {
+    primitiveId: 'planet',
+    instances: [
+      {
+        x: 500,
+        y: 250,
+        rotationDegrees: 190,
+        showBuilding: true,
+      },
+      {
+        x: 800,
+        y: 250,
+        rotationDegrees: 190,
+        showBuilding: false,
+      },
+    ],
+  },
+];
 
 const worldWidth = 10000;
 const worldHeight = 10000;
@@ -12,30 +32,39 @@ const ctx = new Context({
   }
 });
 
-ctx.registerRenderable({
+ctx.definePrimitive({
   id: 'planet',
-  renderableClass: Planet
+  create: () => {
+    const planet = ctx.createGroup()
+    const circle = ctx.createCircle()
+      .setRadius(100)
+    ctx.addToGroup({ group: planet, element: circle });
+
+    const building = ctx.createRectangle()
+    planet.addChildWithId({ id: 'building', child: building });
+    return planet;
+  },
+  render: ({ object, state }) => {
+    const planet = object;
+
+    if (state.showBuilding) {
+      const building = planet.getChildById('building');
+      building.setVisible(true);
+    }
+  }
 });
 
 ctx.setBackgroundColor('black');
 
-const planet = ctx.instantiateRenderable({ id: 'planet' })
-  .setPosition({ x: worldWidth / 2 + 500, y: worldHeight / 2 + 500 })
-  .setRotationDegrees({ angleDegrees: 90 })
-  .updateState({ hasBuilding: true })
-
-const planet2 = ctx.instantiateRenderable({ id: 'planet' })
-  .setPosition({ x: 1220, y: 1220 })
-
-let cameraX = worldWidth / 2;
-let cameraY = worldHeight / 2;
+//let cameraX = worldWidth / 2;
+//let cameraY = worldHeight / 2;
 
 function step() {
-  planet.setRotationDegrees({ angleDegrees: planet.state.rotationDegrees + 0.5 });
-  //planet2.setPosition({ x: planet2.state.x + 1, y: planet2.state.y + 1 });
-  ctx.setViewportPosition({ x: cameraX, y: cameraY });
-  cameraX += 1;
-  cameraY += 1;
+  //ctx.setViewportPosition({ x: cameraX, y: cameraY });
+  //cameraX += 1;
+  //cameraY += 1;
+  scene[0].instances[0].rotationDegrees += 0.5;
+  ctx.update({ scene });
   ctx.render();
   requestAnimationFrame(step);
 }
