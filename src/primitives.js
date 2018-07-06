@@ -67,6 +67,7 @@ export const radarBuilding = {
     this.building = this.ctx.createRectangle()
       .setWidth(40)
       .setHeight(20)
+      .setFillColor('none')
     group.addChild(this.building);
 
     this.dish = this.ctx.createTriangle()
@@ -114,12 +115,14 @@ export const planet = {
       .setWidth(40)
       .setHeight(80)
       .setPosition({ x: -70, y: -40 })
+      .setFillColor('none')
     planet.addChild(this.leftBuilding);
 
     this.topBuilding = this.ctx.createRectangle()
       .setWidth(45)
       .setHeight(30)
       .setPosition({ x: 0, y: -70 })
+      .setFillColor('none')
     planet.addChild(this.topBuilding)
 
     this.radar = this.ctx.createPrimitive({
