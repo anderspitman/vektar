@@ -1,143 +1,234 @@
-import { Context } from './vektar';
-import { Game } from './game';
-import { ship, radarBuilding, planet } from './primitives';
+import { Renderable, svgNS } from './renderable';
 
-const team1Color = 'blue';
-const team2Color = 'yellow';
+// TODO: allow removal of children
+class Group extends Renderable {
 
-const KEY_LEFT = 37;
-const KEY_RIGHT = 39;
-const KEY_UP = 38;
+  constructor() {
+    super();
 
-const DEGREES_TO_RADIANS = Math.PI / 180;
+    const g = document.createElementNS(svgNS, 'g');
+    this.el = g;
 
-class Camera {
-  constructor(vektarContext) {
-    this.ctx = vektarContext;
+    this.children = [];
+    this.idChildren = {};
   }
 
-  setCenterPosition({ x, y }) {
-    const centerX = x - this.ctx.getWidth() / 2;
-    const centerY = y - this.ctx.getHeight() / 2;
+  addChild(child) {
+    this.children.push(child);
+    this.el.appendChild(child.getDomElement());
+  }
 
-    this.ctx.setViewportPosition({ x: centerX, y: centerY });
+  addChildWithId({ id, child }) {
+    this.addChild(child);
+    this.idChildren[id] = child;
+  }
+
+  getChildById(id) {
+    return this.idChildren[id];
   }
 }
 
-const playerShip = {
-  x: 1200,
-  y: 1200,
-  rotationDegrees: 0,
-  scale: 1.0,
-  color: team1Color,
-  initialRotationDegrees: -90,
-  velocity: {
-    x: 0,
-    y: 0,
+class Circle extends Renderable {
+  constructor() {
+    super();
+
+    const circle = document.createElementNS(svgNS, 'circle');
+    circle.setAttributeNS(null, 'cx', 0);
+    circle.setAttributeNS(null, 'cy', 0);
+    circle.setAttributeNS(null, 'r', 10);
+    circle.setAttributeNS(null, 'fill', 'none');
+    circle.setAttributeNS(null, 'stroke', '#1bd100');
+
+    this.el = circle;
   }
-};
-
-const scene = [
-  {
-    primitiveId: 'ship',
-    instances: [
-      playerShip 
-    ]
-  },
-  {
-    primitiveId: 'planet',
-    instances: [
-      {
-        x: 1000,
-        y: 1000,
-        rotationDegrees: 0,
-        scale: 1.0,
-        showBuilding: true,
-        hasRadar: false,
-        color: team1Color,
-      },
-      {
-        x: 1300,
-        y: 1300,
-        rotationDegrees: 0,
-        scale: 1.0,
-        showBuilding: true,
-        hasRadar: true,
-        color: team2Color,
-      },
-    ],
-  },
-];
-
-const worldWidth = 10000;
-const worldHeight = 10000;
-
-const ctx = new Context({
-  domElementId: 'root',
-  canvasSize: {
-    width: worldWidth,
-    height: worldHeight,
+  
+  setRadius(radius) {
+    this.el.setAttributeNS(null, 'r', radius);
+    return this;
   }
-});
-
-ctx.registerPrimitive(ship);
-ctx.registerPrimitive(radarBuilding);
-ctx.registerPrimitive(planet);
-
-ctx.setBackgroundColor('black');
-
-//let cameraX = worldWidth / 2;
-//let cameraY = worldHeight / 2;
-
-//ctx.render({ scene });
-
-// handle keyboard input
-const keys = {};
-document.addEventListener('keyup', function(e) {
-  keys[e.keyCode] = false;
-});
-document.addEventListener('keydown', function(e) {
-  keys[e.keyCode] = true;
-});
-
-const camera = new Camera(ctx);
-
-function step() {
-  //ctx.setViewportPosition({ x: cameraX, y: cameraY });
-  //cameraX += 1;
-  //cameraY += 1;
-  //
-  const rotationStep = 5.0;
-  const thrustAcceleration = 0.1;
-
-  if (keys[KEY_LEFT]) {
-    playerShip.rotationDegrees -= rotationStep;
-  }
-  else if (keys[KEY_RIGHT]) {
-    playerShip.rotationDegrees += rotationStep;
-  }
-  playerShip.thrustersOn = keys[KEY_UP];
-
-  // movement
-  const adjustedRotation =
-    playerShip.rotationDegrees + playerShip.initialRotationDegrees;
-  const rotationRadians = adjustedRotation * DEGREES_TO_RADIANS;
-  const rotationX = Math.cos(rotationRadians);
-  const rotationY = Math.sin(rotationRadians);
-  //console.log(rotationRadians);
-  //console.log(x, y);
-
-  if (playerShip.thrustersOn) {
-    playerShip.velocity.x += rotationX * thrustAcceleration;
-    playerShip.velocity.y += rotationY * thrustAcceleration;
-  }
-
-  playerShip.x += playerShip.velocity.x;
-  playerShip.y += playerShip.velocity.y;
-
-  camera.setCenterPosition({ x: playerShip.x, y: playerShip.y });
-
-  ctx.render({ scene });
-  requestAnimationFrame(step);
 }
-requestAnimationFrame(step);
+
+class Rectangle extends Renderable {
+  constructor() {
+    super();
+
+    this.el = document.createElementNS(svgNS, 'rect');
+    //rect.setAttributeNS(null, 'stroke', 'blue');
+    //rect.setAttributeNS(null, 'visibility', 'hidden');
+  }
+
+  setWidth(width) {
+    this.el.setAttributeNS(null, 'width', width);
+    return this;
+  }
+
+  setHeight(height) {
+    this.el.setAttributeNS(null, 'height', height);
+    return this;
+  }
+}
+
+class Triangle extends Renderable {
+  constructor() {
+    super();
+
+    this.el = document.createElementNS(svgNS, 'polygon');
+  }
+
+  setWidth(width) {
+    this.state.width = width;
+    return this;
+  }
+
+  setHeight(height) {
+    this.state.height = height;
+    return this;
+  }
+
+  setVertices({ vertex1, vertex2, vertex3 }) {
+    const w = this.state.width;
+    const h = this.state.height;
+
+    this.el.setAttributeNS(null, 'points',
+      vertex1.x * w + ' ' + vertex1.y * h + ', ' +
+      vertex2.x * w + ' ' + vertex2.y * h + ', ' +
+      vertex3.x * w + ' ' + vertex3.y * h);
+
+    return this;
+  }
+}
+
+export class Context {
+  constructor({ domElementId, canvasSize }) {
+    this.parent = document.getElementById(domElementId);
+
+    const dim = this.parent.getBoundingClientRect();
+    this.width = dim.width;
+    this.height = dim.height;
+    this.svg = document.createElementNS(svgNS, 'svg');
+    this.svg.setAttributeNS(null, 'width', dim.width);
+    this.svg.setAttributeNS(null, 'height', dim.height);
+
+    this.root = document.createElementNS(svgNS, 'g');
+    this.svg.appendChild(this.root);
+
+    this.backgroundRect = document.createElementNS(svgNS, 'rect');
+    this.backgroundRect.setAttributeNS(null, 'width', canvasSize.width);
+    this.backgroundRect.setAttributeNS(null, 'height', canvasSize.height);
+    this.backgroundRect.setAttributeNS(null, 'fill', 'white');
+    this.root.appendChild(this.backgroundRect);
+
+    this.parent.appendChild(this.svg);
+
+    this.primitives = {};
+    this.scene = {};
+  }
+
+  setBackgroundColor(color) {
+    this.backgroundRect.setAttributeNS(null, 'fill', color);
+  }
+
+  setViewportPosition({ x, y }) {
+    this.root.setAttributeNS(null, 'transform',
+      'translate(' + -x + ', ' + -y + ')')
+  }
+
+  getWidth() {
+    return this.width;
+  }
+
+  getHeight() {
+    return this.height;
+  }
+
+  registerPrimitive({ id, create, render }) {
+    if (this.primitives[id] !== undefined) {
+      throw "Primitive already defined";
+    }
+
+    const self = this;
+
+    function NewPrimitive() {
+      Renderable.call(this);
+
+      this.ctx = self;
+    };
+    NewPrimitive.prototype = Object.create(Renderable.prototype);
+    NewPrimitive.prototype.constructor = NewPrimitive;
+    NewPrimitive.prototype.create = create;
+    NewPrimitive.prototype.render = render;
+
+    this.primitives[id] = NewPrimitive;
+  }
+
+  createPrimitive({ primitiveId }) {
+    const prim = new this.primitives[primitiveId]();
+    prim.obj = prim.create();
+    prim.el = prim.obj.el;
+    return prim;
+  }
+
+  createGroup() {
+    return new Group();
+  }
+
+  addToGroup({ group, element }) {
+    group.addChild(element);
+  }
+
+  createCircle() {
+    return new Circle();
+  }
+
+  createRectangle() {
+    return new Rectangle();
+  }
+
+  createTriangle() {
+    return new Triangle();
+  }
+
+  render({ scene }) {
+    for (let objectType of scene) {
+
+      if (this.scene[objectType.primitiveId] === undefined) {
+        this.scene[objectType.primitiveId] = {
+          instances: [],
+        };
+      }
+
+      const scene = this.scene[objectType.primitiveId];
+
+      const lenDiff = scene.instances.length - objectType.instances.length;
+
+      // we need more instances than are currently rendered, so instantiate
+      // some more
+      if (lenDiff < 0) {
+        const diff = Math.abs(lenDiff);
+        for (let i = 0; i < diff; i++) {
+          const obj = this.createPrimitive({
+            primitiveId: objectType.primitiveId,
+          });
+          scene.instances.push(obj);
+          this.root.appendChild(obj.getDomElement());
+        }
+      }
+      // TODO
+      // we have more instances than we need currently rendered, so make
+      // them invisible (but don't remove them from the DOM in case we need
+      // them later).
+      else if (lenDiff > 0) {
+      }
+
+      for (let i = 0; i < scene.instances.length; i++) {
+        const instance = scene.instances[i];
+        const state = objectType.instances[i];
+        instance.setPosition({ x: state.x, y: state.y });
+        instance.setRotationDegrees({ angleDegrees: state.rotationDegrees });
+        instance.setScale(state.scale);
+        //instance.updateTransform();
+        instance.render({ state });
+      }
+    }
+  }
+}
