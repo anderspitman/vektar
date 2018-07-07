@@ -141,8 +141,8 @@ export class Context {
     return this.height;
   }
 
-  registerPrimitive({ id, create, render }) {
-    if (this.primitives[id] !== undefined) {
+  registerPrimitive({ primitiveId, create, render }) {
+    if (this.primitives[primitiveId] !== undefined) {
       throw "Primitive already defined";
     }
 
@@ -158,7 +158,7 @@ export class Context {
     NewPrimitive.prototype.create = create;
     NewPrimitive.prototype.render = render;
 
-    this.primitives[id] = NewPrimitive;
+    this.primitives[primitiveId] = NewPrimitive;
   }
 
   createPrimitive({ primitiveId }) {
