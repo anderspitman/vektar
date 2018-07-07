@@ -2,7 +2,7 @@
   "name": "vektar",
   "version": "0.1.0",
   "description": "2D Vector Drawing Library",
-  "main": "index.js",
+  "main": "src/vektar.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
