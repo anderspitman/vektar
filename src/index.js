@@ -154,26 +154,6 @@ export class Context {
     return this.height;
   }
 
-  registerPrimitive({ primitiveId, create, render }) {
-    if (this.primitives[primitiveId] !== undefined) {
-      throw "Primitive already registered";
-    }
-
-    const self = this;
-
-    function NewPrimitive() {
-      Renderable.call(this);
-
-      this.ctx = self;
-    };
-    NewPrimitive.prototype = Object.create(Renderable.prototype);
-    NewPrimitive.prototype.constructor = NewPrimitive;
-    NewPrimitive.prototype.create = create;
-    NewPrimitive.prototype.render = render;
-
-    this.primitives[primitiveId] = NewPrimitive;
-  }
-
   definePrimitive({ primitiveId, descriptor }) {
 
     if (this.descriptors[primitiveId] !== undefined) {
