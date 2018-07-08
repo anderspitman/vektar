@@ -11,6 +11,8 @@ export function Renderable() {
     anchorX: 0,
     anchorY: 0,
   };
+
+  this.renderFuncs = [];
 }
 
 Renderable.prototype.getDomElement = function() {
@@ -32,19 +34,19 @@ Renderable.prototype.updateState = function(update) {
 Renderable.prototype.setPosition = function({ x, y }) {
   this.state.x = x - this.state.anchorX;
   this.state.y = y - this.state.anchorY;
-  this.updateTransform();
+  this._updateTransform();
   return this;
 }
 
 Renderable.prototype.setScale = function(scale) {
   this.state.scale = scale;
-  this.updateTransform();
+  this._updateTransform();
   return this;
 }
 
-Renderable.prototype.setRotationDegrees = function({ angleDegrees }) {
+Renderable.prototype.setRotationDegrees = function(angleDegrees) {
   this.state.rotationDegrees = angleDegrees;
-  this.updateTransform();
+  this._updateTransform();
   return this;
 }
 
@@ -69,7 +71,7 @@ Renderable.prototype.setFillColor = function(color) {
   return this;
 }
 
-Renderable.prototype.updateTransform = function() {
+Renderable.prototype._updateTransform = function() {
   this.el.setAttributeNS(null,
     'transform',
     'translate(' + this.state.x + ', ' + this.state.y + ') ' +
@@ -78,4 +80,14 @@ Renderable.prototype.updateTransform = function() {
     ') ' +
     'scale(' + this.state.scale + ')')
   return this;
+}
+
+Renderable.prototype.addRenderFunc = function(callback) {
+  this.renderFuncs.push(callback);
+}
+
+Renderable.prototype.render = function({ state }) {
+  for (let renderFunc of this.renderFuncs) {
+    renderFunc({ state });
+  }
 }
