@@ -85,24 +85,15 @@ class Triangle extends Renderable {
     this.el = document.createElementNS(svgNS, 'polygon');
   }
 
-  setWidth(width) {
-    this.state.width = width;
-    return this;
-  }
-
-  setHeight(height) {
-    this.state.height = height;
-    return this;
-  }
-
   setVertices({ vertex1, vertex2, vertex3 }) {
     const w = this.state.width;
     const h = this.state.height;
 
+    // note: inverted for model coordinates
     this.el.setAttributeNS(null, 'points',
-      vertex1.x * w + ' ' + vertex1.y * h + ', ' +
-      vertex2.x * w + ' ' + vertex2.y * h + ', ' +
-      vertex3.x * w + ' ' + vertex3.y * h);
+      vertex1.x + ' ' + -vertex1.y + ', ' +
+      vertex2.x + ' ' + -vertex2.y + ', ' +
+      vertex3.x + ' ' + -vertex3.y);
 
     return this;
   }
@@ -130,7 +121,6 @@ export class Context {
 
     this.parent.appendChild(this.svg);
 
-    this.primitives = {};
     this.descriptors = {};
     this.scene = {};
 
@@ -315,8 +305,6 @@ class PrimitiveBuilder {
 
   createTriangle(descriptor) {
     const triangle = this.ctx.createTriangle()
-    this.bindData(triangle, descriptor.width, 'setWidth');
-    this.bindData(triangle, descriptor.height, 'setHeight');
     this.bindData(triangle, descriptor.vertices, 'setVertices');
 
     return triangle;
