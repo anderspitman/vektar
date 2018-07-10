@@ -32,8 +32,8 @@ Renderable.prototype.updateState = function(update) {
 }
 
 Renderable.prototype.setPosition = function({ x, y }) {
-  this.state.x = x - this.state.anchorX;
-  this.state.y = y - this.state.anchorY;
+  this.state.x = x;
+  this.state.y = y;
   this._updateTransform();
   return this;
 }
