@@ -116,6 +116,7 @@ export class Context {
     this.backgroundRect = document.createElementNS(svgNS, 'rect');
     this.backgroundRect.setAttributeNS(null, 'width', canvasSize.width);
     this.backgroundRect.setAttributeNS(null, 'height', canvasSize.height);
+    this.backgroundRect.setAttributeNS(null, 'y', -canvasSize.height);
     this.backgroundRect.setAttributeNS(null, 'fill', 'white');
     this.root.appendChild(this.backgroundRect);
 
@@ -133,7 +134,7 @@ export class Context {
 
   setViewportPosition({ x, y }) {
     this.root.setAttributeNS(null, 'transform',
-      'translate(' + -x + ', ' + -y + ')')
+      'translate(' + -x + ', ' + y + ')')
   }
 
   getWidth() {

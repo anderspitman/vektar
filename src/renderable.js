@@ -71,11 +71,13 @@ Renderable.prototype.setFillColor = function(color) {
   return this;
 }
 
+// NOTE: coordinate system is flipped for Y in order to be more like math
+// rather than computer graphics
 Renderable.prototype._updateTransform = function() {
   this.el.setAttributeNS(null,
     'transform',
-    'translate(' + this.state.x + ', ' + this.state.y + ') ' +
-    'rotate(' + this.state.rotationDegrees + ', ' + 
+    'translate(' + this.state.x + ', ' + -this.state.y + ') ' +
+    'rotate(' + -this.state.rotationDegrees + ', ' + 
             this.state.anchorX + ', ' + this.state.anchorY +
     ') ' +
     'scale(' + this.state.scale + ')')
