@@ -204,14 +204,24 @@ export class Context {
           this.root.appendChild(obj.getDomElement());
         }
       }
-      // TODO
       // we have more instances than we need currently rendered, so make
       // them invisible (but don't remove them from the DOM in case we need
       // them later).
-      else if (lenDiff > 0) {
+      else if (lenDiff >= 0) {
+        
+        for (let i = 0; i < scene.instances.length; i++) {
+
+          const instance = scene.instances[i];
+
+          instance.setVisible(true);
+
+          if (i >= objectType.instances.length) {
+            instance.setVisible(false);
+          }
+        }
       }
 
-      for (let i = 0; i < scene.instances.length; i++) {
+      for (let i = 0; i < objectType.instances.length; i++) {
         const instance = scene.instances[i];
         const state = objectType.instances[i];
         instance.render({ state });
