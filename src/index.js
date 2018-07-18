@@ -104,12 +104,23 @@ export class Context {
     this.parent = document.getElementById(domElementId);
 
     const dim = this.parent.getBoundingClientRect();
-    this.width = dim.width;
-    this.height = dim.height;
+    //this.width = dim.width;
+    //this.height = dim.height;
+    this.width = 640;
+    this.height = 480;
     this.canvasSize = canvasSize;
     this.svg = document.createElementNS(svgNS, 'svg');
     this.svg.setAttributeNS(null, 'width', dim.width);
     this.svg.setAttributeNS(null, 'height', dim.height);
+
+    const viewbox = makeViewboxAttribute({
+      x: 0,
+      y: 0,
+      width: this.width,
+      height: this.height,
+    });
+    console.log(viewbox);
+    this.svg.setAttributeNS(null, 'viewBox', viewbox);
 
     this.root = document.createElementNS(svgNS, 'g');
     this.svg.appendChild(this.root);
