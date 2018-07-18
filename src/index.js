@@ -106,6 +106,7 @@ export class Context {
     const dim = this.parent.getBoundingClientRect();
     this.width = dim.width;
     this.height = dim.height;
+    this.canvasSize = canvasSize;
     this.svg = document.createElementNS(svgNS, 'svg');
     this.svg.setAttributeNS(null, 'width', dim.width);
     this.svg.setAttributeNS(null, 'height', dim.height);
@@ -135,6 +136,17 @@ export class Context {
   setViewportPosition({ x, y }) {
     this.root.setAttributeNS(null, 'transform',
       'translate(' + -x + ', ' + y + ')')
+    // This doesn't appear to really be smoother
+    // TODO: figure out which is faster
+    //const viewbox = makeViewboxAttribute({
+    //  //x: -this.width / 2,
+    //  x: x,
+    //  y: -y,
+    //  width: this.width,
+    //  height: this.height,
+    //});
+    //console.log(viewbox);
+    //this.svg.setAttributeNS(null, 'viewBox', viewbox);
   }
 
   getWidth() {
@@ -328,4 +340,8 @@ class PrimitiveBuilder {
   getKey(value) {
     return value.slice(1);
   }
+}
+
+function makeViewboxAttribute({ x, y, width, height }) {
+  return x + " " + y + " " + width + " " + height;
 }
